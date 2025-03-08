@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const BarcodeController = require("../controller/barcodeController");
+const AbsenController = require("../controller/absenController");
 const authMiddleware = require("../middleware/authMiddleware");
+const { validateStoreAbsen } = require("../middleware/validation/validation");
 // middleware
 router.use(authMiddleware);
 // route list
-router.get("/", BarcodeController.createBarcode);
+router.post("/", validateStoreAbsen, AbsenController.storeAbsen);
 
 module.exports = router;
