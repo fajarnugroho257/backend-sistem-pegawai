@@ -4,6 +4,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const barcodeRoute = require("./routes/barcodeRoute");
 const absenRoute = require("./routes/absenRoute");
+const generatejadwalRoute = require("./routes/generatejadwal");
 require("dotenv").config();
 const cors = require("cors");
 
@@ -24,10 +25,11 @@ const port = 8000;
 connectDB();
 app.use(express.json());
 
-app.use("/auth", authRoutes); // Route untuk login & registrasi
-app.use("/users", userRoutes); // Route untuk user (butuh login)
-app.use("/barcode", barcodeRoute); // Route untuk user (butuh login)
-app.use("/absen", absenRoute); // Route untuk user (butuh login)
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/barcode", barcodeRoute);
+app.use("/absen", absenRoute);
+app.use("/generate-jadwal", generatejadwalRoute);
 
 app.listen(port, () => {
   console.log(`Server berjalan di http://localhost:${port}`);

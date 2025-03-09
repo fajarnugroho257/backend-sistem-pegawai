@@ -1,27 +1,25 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 
-const absen = sequelize.define(
-  "absen",
+const Jadwal_karyawan = sequelize.define(
+  "jadwal_karyawan",
   {
-    absen_id: {
+    data_id: {
       type: DataTypes.STRING,
       primaryKey: true,
       allowNull: false,
     },
+    jadwal_id: { type: DataTypes.STRING, allowNull: false },
+    shift_id: { type: DataTypes.INTEGER, allowNull: false },
     user_id: { type: DataTypes.STRING, allowNull: false },
-    absen_date: { type: DataTypes.STRING, allowNull: false },
-    absen_masuk: { type: DataTypes.STRING, allowNull: true },
-    absen_masuk_time: { type: DataTypes.STRING, allowNull: true },
-    absen_pulang: { type: DataTypes.STRING, allowNull: true },
-    absen_pulang_time: { type: DataTypes.STRING, allowNull: true },
+    data_status: { type: DataTypes.ENUM("yes", "no"), allowNull: false },
     createdAt: { type: DataTypes.DATE, allowNull: true },
     updatedAt: { type: DataTypes.DATE, allowNull: true },
   },
   {
-    tableName: "absen",
+    tableName: "jadwal_karyawan",
     timestamps: true, // Sequelize otomatis menangani createdAt & updatedAt
   }
 );
 
-module.exports = absen;
+module.exports = Jadwal_karyawan;

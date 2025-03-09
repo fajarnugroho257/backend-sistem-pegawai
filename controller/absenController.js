@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Absen = require("../models/absen");
+const Users = require("../models/users");
 
 exports.storeAbsen = async (req, res) => {
   const absen_id = await newAbsenID();
@@ -10,7 +11,8 @@ exports.storeAbsen = async (req, res) => {
   // user
   const dataBarcode = req.body.dataImage;
   const parts = dataBarcode.split("-");
-  const barcodeUserId = parts[parts.length - 1];
+  const barcodeUserId = parts[parts.length - 2];
+  const barcodeStatus = parts[parts.length - 1];
   if (req.user.user_id !== barcodeUserId) {
     res.status(200).json({ message: "error" });
   }
@@ -22,14 +24,52 @@ exports.storeAbsen = async (req, res) => {
     absen_masuk: "yes",
     absen_masuk_time: now,
     absen_pulang: "no",
-    absen_pulang_time: now,
+    absen_pulang_time: null,
   };
   //
-  const newUser = await Absen.create(params);
-  if (newUser) {
-    res.status(200).json({ success: true, message: params });
-  } else {
-    res.status(200).json({ success: false, message: "Error" });
+  try {
+    // get detail absen
+    let absen = await Absen.findOne({
+      where: { user_id: req.user.user_id, absen_date: today },
+    });
+    if (!absen) {
+      // absen masuk
+      absen = await Absen.create(params);
+    } else {
+      // check jika sudah absen masuk dan menggunakan barcode absen masuk maka error
+      if (barcodeStatus === "masuk") {
+        return res.status(200).json({
+          success: false,
+          message: "Barcode untuk absen masuk, silahkan untuk generate ulang",
+        });
+      }
+      if (absen.absen_masuk === "yes" && absen.absen_pulang === "yes") {
+        return res.status(200).json({
+          success: false,
+          message: "Anda sudah melakukan absen masuk dan pulang",
+        });
+      }
+      // absen pulang
+      absen.update({
+        absen_pulang: "yes",
+        absen_pulang_time: now,
+      });
+    }
+    if (absen) {
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: `Sukses, Melakukan absen ${barcodeStatus}`,
+        });
+    } else {
+      return res.status(200).json({ success: false, message: "Error" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
