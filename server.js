@@ -16,7 +16,7 @@ app.use(
     origin: [
       "http://192.168.1.105:3000",
       "http://127.0.0.1:3000",
-      "https://demoapps.online/absen",
+      "https://demoapps.online",
     ], // Sesuaikan dengan alamat frontend React
     credentials: true, // Izinkan cookie atau token dikirim
   })
